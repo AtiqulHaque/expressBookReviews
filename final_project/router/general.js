@@ -113,15 +113,11 @@ public_users.get("/getby-title/:title", function (req, res) {
 
 //  Get book review
 public_users.get("/review/:isbn", function (req, res) {
-  let foundBook = [];
-  for (const key in books) {
-    if (books[key].review.isbn === req.params.isbn) {
-      foundBook.push(books[key]);
-    }
+  if (books?.[req.params.isbn]) {
+    return res.send(books[req.params.isbn].review);
+  } else {
+    return res.status(400).json({ message: "No such book for this isbn" });
   }
-
-  console.log(books);
-  return res.send(foundBook);
 });
 
 module.exports.general = public_users;
