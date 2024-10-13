@@ -12,11 +12,7 @@ const isValid = (username) => {
     return user.username === username;
   });
   // Return true if any user with the same username is found, otherwise false
-  if (userswithsamename.length > 0) {
-    return true;
-  } else {
-    return false;
-  }
+  return userswithsamename.length > 0;
 };
 
 const authenticatedUser = (username, password) => {
@@ -27,11 +23,7 @@ const authenticatedUser = (username, password) => {
     return user.username === username && user.password === password;
   });
   // Return true if any valid user is found, otherwise false
-  if (validusers.length > 0) {
-    return true;
-  } else {
-    return false;
-  }
+  return validusers.length > 0;
 };
 
 //only registered users can login
@@ -49,7 +41,7 @@ regd_users.post("/login", (req, res) => {
     // Generate JWT access token
     let accessToken = jwt.sign(
       {
-        data: password,
+        user: username,
       },
       "access",
       { expiresIn: 60 * 60 }
@@ -68,7 +60,33 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+
+  if (books?.[req.params.isbn]) {
+    let bookWithReview = books[req.params.isbn];
+    if (bookWithReview?.["reviews"]) {
+      bookWithReview["reviews"][req.user.user] = req.body.review;
+    }
+    books[req.params.isbn] = bookWithReview;
+    return res.send(books[req.params.isbn]);
+  } else {
+    return res.status(400).json({ message: "No such book for this isbn" });
+  }
+});
+
+// Add a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  //Write your code here
+
+  if (books?.[req.params.isbn]) {
+    let bookWithReview = books[req.params.isbn];
+    if (bookWithReview?.["reviews"]) {
+      delete bookWithReview["reviews"][req.user.user];
+    }
+    books[req.params.isbn] = bookWithReview;
+    return res.send(books[req.params.isbn]);
+  } else {
+    return res.status(400).json({ message: "No such book for this isbn" });
+  }
 });
 
 module.exports.authenticated = regd_users;
