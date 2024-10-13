@@ -30,7 +30,7 @@ public_users.post("/register", (req, res) => {
 public_users.get("/", async function (req, res) {
   try {
     const allbooks = await axios.get("http://localhost:5100/books");
-    res.send(JSON.stringify(allbooks.data, null, 4));
+    res.send(allbooks.data);
   } catch (error) {
     console.log(error);
     res.statusCode(500).send("Something went wrong");
