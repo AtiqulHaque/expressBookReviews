@@ -114,7 +114,7 @@ public_users.get("/getby-title/:title", function (req, res) {
 //  Get book review
 public_users.get("/review/:isbn", function (req, res) {
   if (books?.[req.params.isbn]) {
-    return res.send(books[req.params.isbn].review);
+    return res.send(books[req.params.isbn].reviews);
   } else {
     return res.status(400).json({ message: "No such book for this isbn" });
   }
